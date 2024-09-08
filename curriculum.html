@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Disability Studies Curriculum - Open Source Accessibility Tools
+    </title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <nav>
+          <div class="logo">A11Y Tools</div>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="resources.html">Resources</a></li>
+            <li><a href="curriculum.html">Curriculum</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <h1>Disability Studies Curriculum</h1>
+        <p class="subtitle">
+          An interactive syllabus for learning about disability studies and
+          accessibility.
+        </p>
+
+        <div class="curriculum-module">
+          <div class="module-header" onclick="toggleModule('module1')">
+            <h3>Module 1: Introduction to Disability Studies</h3>
+          </div>
+          <div id="module1" class="module-content">
+            <p>
+              This module covers the fundamental concepts of disability studies,
+              including:
+            </p>
+            <ul>
+              <li>Historical perspectives on disability</li>
+              <li>Social vs. medical models of disability</li>
+              <li>Intersectionality and disability</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="curriculum-module">
+          <div class="module-header" onclick="toggleModule('module2')">
+            <h3>Module 2: Accessibility in the Digital Age</h3>
+          </div>
+          <div id="module2" class="module-content">
+            <p>
+              Explore the challenges and opportunities for accessibility in
+              technology:
+            </p>
+            <ul>
+              <li>Web accessibility standards (WCAG)</li>
+              <li>Assistive technologies and their impact</li>
+              <li>Universal Design principles</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="curriculum-module">
+          <div class="module-header" onclick="toggleModule('module3')">
+            <h3>Module 3: Legal and Ethical Considerations</h3>
+          </div>
+          <div id="module3" class="module-content">
+            <p>
+              Understand the legal landscape and ethical implications of
+              accessibility:
+            </p>
+            <ul>
+              <li>Disability rights legislation (e.g., ADA, Section 508)</li>
+              <li>Ethical considerations in accessible design</li>
+              <li>Case studies in accessibility law</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Add more curriculum modules as needed -->
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2024 Open Source Accessibility Tools. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      function toggleModule(moduleId) {
+        const moduleHeader = document.querySelector(`#${moduleId} .module-header`);
+        const moduleContent = document.querySelector(`#${moduleId} .module-content`);
+    
+        moduleHeader.classList.toggle('active');
+        moduleContent.classList.toggle('active');
+      }
+    </script>
+  </body>
+</html>

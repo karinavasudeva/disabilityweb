@@ -1,0 +1,230 @@
+/* Minimalist styles with calming colors and toggle animation */
+:root {
+    --primary-color: #34495e; /* Dark blue-gray */
+    --background-color: #f5f5f5; /* Light gray */
+    --text-color: #333333; /* Dark gray for text */
+    --accent-color: #3498db; /* Soft blue for accents */
+    --secondary-background: #ffffff; /* White for cards */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+}
+
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Typography */
+h1, h2, h3 {
+    font-weight: 300;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+p {
+    margin-bottom: 1.5rem;
+}
+
+/* Header styles */
+header {
+    background-color: var(--secondary-background);
+    padding: 1rem 0;
+    box-shadow: 0 2px 4px rgba(202, 66, 66, 0.1);
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--primary-color);
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+}
+
+nav ul li {
+    margin-left: 2rem;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: var(--accent-color);
+}
+
+/* Main content styles */
+main {
+    padding: 4rem 0;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+}
+
+.cta {
+    display: inline-block;
+    background-color: var(--accent-color);
+    color: var(--secondary-background);
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.cta:hover {
+    background-color: var(--primary-color);
+}
+
+/* Grid layouts */
+.tool-grid,
+.resource-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+/* Card styles */
+.tool-card,
+.resource-card,
+.curriculum-module {
+    background-color: var(--secondary-background);
+    padding: 1.5rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.tool-card:hover,
+.resource-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Search container */
+.search-container {
+    margin-bottom: 2rem;
+    display: flex;
+}
+
+.search-container input {
+    flex-grow: 1;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid var(--primary-color);
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+}
+
+.search-container button {
+    padding: 0.5rem 1rem;
+    background-color: var(--primary-color);
+    color: var(--secondary-background);
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-container button:hover {
+    background-color: var(--accent-color);
+}
+
+/* Curriculum styles with toggle animation */
+.curriculum-module {
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.module-header {
+    background-color: var(--secondary-background);
+    color: var(--primary-color);
+    padding: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.module-header::after {
+    content: '+';
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.module-header.active::after {
+    transform: rotate(45deg);
+}
+
+.module-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+}
+
+.module-content.active {
+    max-height: 500px; /* Adjust this value based on your content */
+}
+
+/* Footer styles */
+footer {
+    background-color: var(--secondary-background);
+    color: var(--text-color);
+    padding: 2rem 0;
+    text-align: center;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    nav ul {
+        margin-top: 1rem;
+    }
+    
+    nav ul li {
+        margin-left: 0;
+        margin-right: 1rem;
+    }
+}
