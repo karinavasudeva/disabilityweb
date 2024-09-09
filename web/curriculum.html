@@ -25,80 +25,98 @@
 
     <main>
       <div class="container">
-        <h1>Disability Studies Curriculum</h1>
-        <p class="subtitle">
-          An interactive syllabus for learning about disability studies and
-          accessibility.
-        </p>
+        <h1>Disability Studies</h1>
+        <p class="subtitle">Living Syllabus</p>
 
-        <div class="curriculum-module">
-          <div class="module-header" onclick="toggleModule('module1')">
-            <h3>Module 1: Introduction to Disability Studies</h3>
-          </div>
-          <div id="module1" class="module-content">
-            <p>
-              This module covers the fundamental concepts of disability studies,
-              including:
-            </p>
-            <ul>
-              <li>Historical perspectives on disability</li>
-              <li>Social vs. medical models of disability</li>
-              <li>Intersectionality and disability</li>
-            </ul>
-          </div>
+        <div id="overview">
+          <h2>Course Overview</h2>
+          <p>Disability Studies is an interdisciplinary field that, according to Simi Linton, "aims to expose the ways that disability has been made exceptional and to work to naturalize disabled people." Almost every human will experience a significant illness or disability in their lifetime; therefore, investigating the lived experience, representations, and cultural understandings of disability give us insight into the ever-changing relationship between our bodies, selves, and worlds.</p>
+          <p>This course will introduce students to key critical concepts and debates in the field of Disability Studies by drawing on multiple disciplinary perspectives. Through readings (critical essays, fiction, memoir, poetry, and film), guest lectures, and professor and student-led discussion, students in this course will be introduced to the biomedical, social, and justice models of disability; explore the histories of disability communities and activists; examine representations of disability; and study how multiple forms of inequality and oppression intersect with disability and disability justice work.</p>
         </div>
 
-        <div class="curriculum-module">
-          <div class="module-header" onclick="toggleModule('module2')">
-            <h3>Module 2: Accessibility in the Digital Age</h3>
+        <div id="units">
+          <h2>Course Units</h2>
+
+          <div class="curriculum-module">
+            <div class="module-header" onclick="toggleModule(this)">
+              <h3>Unit 1: Introduction – Key Concepts in Disability Studies</h3>
+            </div>
+            <div class="module-content">
+              <ul>
+                <li>Introduction to Disability Studies</li>
+                <li>The Language of Disability</li>
+                <li>Models of Disability</li>
+              </ul>
+            </div>
           </div>
-          <div id="module2" class="module-content">
-            <p>
-              Explore the challenges and opportunities for accessibility in
-              technology:
-            </p>
-            <ul>
-              <li>Web accessibility standards (WCAG)</li>
-              <li>Assistive technologies and their impact</li>
-              <li>Universal Design principles</li>
-            </ul>
+
+          <div class="curriculum-module">
+            <div class="module-header" onclick="toggleModule(this)">
+              <h3>Unit 2: Experiencing Disability</h3>
+            </div>
+            <div class="module-content">
+              <ul>
+                <li>Becoming Disabled</li>
+                <li>Living with Disability</li>
+                <li>Invisible Disabilities</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="curriculum-module">
+            <div class="module-header" onclick="toggleModule(this)">
+              <h3>Unit 3: The Social Life of Disability</h3>
+            </div>
+            <div class="module-content">
+              <ul>
+                <li>Disability Rights</li>
+                <li>Disability Justice & Interdependence</li>
+                <li>Access</li>
+                <li>Intersectionality</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="curriculum-module">
+            <div class="module-header" onclick="toggleModule(this)">
+              <h3>Unit 4: Representing Disability</h3>
+            </div>
+            <div class="module-content">
+              <ul>
+                <li>Representation</li>
+                <li>Fictional Disability</li>
+                <li>Narrating Disability</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="curriculum-module">
+            <div class="module-header" onclick="toggleModule(this)">
+              <h3>Unit 5: The Future of Disability</h3>
+            </div>
+            <div class="module-content">
+              <ul>
+                <li>Eugenics and the Elimination of Disability</li>
+                <li>Futurity & Reproduction</li>
+                <li>Imagining New Futures</li>
+              </ul>
+            </div>
           </div>
         </div>
-
-        <div class="curriculum-module">
-          <div class="module-header" onclick="toggleModule('module3')">
-            <h3>Module 3: Legal and Ethical Considerations</h3>
-          </div>
-          <div id="module3" class="module-content">
-            <p>
-              Understand the legal landscape and ethical implications of
-              accessibility:
-            </p>
-            <ul>
-              <li>Disability rights legislation (e.g., ADA, Section 508)</li>
-              <li>Ethical considerations in accessible design</li>
-              <li>Case studies in accessibility law</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Add more curriculum modules as needed -->
       </div>
     </main>
 
     <footer>
       <div class="container">
-        <p>&copy; 2024 Open Source Accessibility Tools. All rights reserved.</p>
+        <p>&copy; 2021 ENGL 269: Introduction to Disability Studies. All rights reserved.</p>
       </div>
     </footer>
 
     <script>
-      function toggleModule(moduleId) {
-        const moduleHeader = document.querySelector(`#${moduleId} .module-header`);
-        const moduleContent = document.querySelector(`#${moduleId} .module-content`);
-    
-        moduleHeader.classList.toggle('active');
-        moduleContent.classList.toggle('active');
+      function toggleModule(header) {
+        header.classList.toggle('active');
+        const content = header.nextElementSibling;
+        content.classList.toggle('active');
       }
     </script>
   </body>
