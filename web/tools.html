@@ -8,75 +8,60 @@
   </head>
   <body>
     <header>
-        <div class="container">
-            <nav>
-              <div class="logo">A11Y Tools</div>
-              <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="tools.html">Tools</a></li>
-                <li><a href="resources.html">Resources</a></li>
-                <li><a href="curriculum.html">Curriculum</a></li>
-              </ul>
-            </nav>
-          </div>
+      <div class="container">
+        <nav>
+          <div class="logo">A11Y Tools</div>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="resources.html">Resources</a></li>
+            <li><a href="curriculum.html">Curriculum</a></li>
+          </ul>
+        </nav>
+      </div>
     </header>
 
-    <main>
+    <main class="tools-page">
       <div class="container">
-        <h1>Accessibility Tools</h1>
-        <div class="search-container">
-          <input type="text" id="tool-search" placeholder="Search tools..." />
-          <button onclick="searchTools()">Search</button>
-        </div>
-        <div class="tool-grid">
-          <div class="tool-card">
-            <h3>Screen Reader Enhancer</h3>
-            <p>Python-based tool to improve screen reader functionality.</p>
+          <div class="tools-grid">
+              <div class="column date-column">
+                  <h2>Date</h2>
+                  <p>2023 - Ongoing</p>
+                  <p>2023</p>
+                  <p>2023</p>
+                  <p>2022</p>
+                  <p>2021</p>
+                  <p>2021</p>
+                  <p>2020</p>
+              </div>
+              <div class="column projects-column">
+                  <h2>Projects</h2>
+                  <p>Screen Reader Enhancer</p>
+                  <p>AI-Powered Image Describer</p>
+                  <p>3D Printable Adaptive Controller</p>
+                  <p>Accessible Color Palette Generator</p>
+                  <p>Voice-Controlled Navigation System</p>
+                  <p>Braille Keyboard Emulator</p>
+                  <p>Sign Language Translation App</p>
+              </div>
+              <div class="column links-column">
+                  <h2>Links</h2>
+                  <a href="#" class="button case-study">Case Study</a>
+                  <a href="#" class="button case-study">Case Study</a>
+                  <a href="#" class="button case-study">Case Study</a>
+                  <a href="#" class="button case-study">Case Study</a>
+                  <a href="#" class="button website-live">Website Live</a>
+                  <a href="#" class="button view-gallery">View Gallery</a>
+                  <a href="#" class="button view-gallery">View Gallery</a>
+              </div>
           </div>
-          <div class="tool-card">
-            <h3>AI-Powered Image Describer</h3>
-            <p>
-              Machine learning model for generating detailed image descriptions.
-            </p>
-          </div>
-          <div class="tool-card">
-            <h3>3D Printable Adaptive Controller</h3>
-            <p>
-              Customizable designs for creating accessible gaming controllers.
-            </p>
-          </div>
-          <!-- Add more tool cards as needed -->
-        </div>
       </div>
-    </main>
+  </main>
 
     <footer>
-      <!-- Include the same footer as the main page -->
+      <div class="container">
+        <p>&copy; 2024 Open Source Accessibility Tools. All rights reserved.</p>
+      </div>
     </footer>
-
-    <script>
-      function searchTools() {
-        const searchTerm = document
-          .getElementById("tool-search")
-          .value.toLowerCase();
-        const toolCards = document.querySelectorAll(".tool-card");
-
-        toolCards.forEach((card) => {
-          const toolName = card.querySelector("h3").textContent.toLowerCase();
-          const toolDescription = card
-            .querySelector("p")
-            .textContent.toLowerCase();
-
-          if (
-            toolName.includes(searchTerm) ||
-            toolDescription.includes(searchTerm)
-          ) {
-            card.style.display = "block";
-          } else {
-            card.style.display = "none";
-          }
-        });
-      }
-    </script>
   </body>
 </html>
