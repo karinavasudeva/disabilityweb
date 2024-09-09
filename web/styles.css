@@ -1,38 +1,79 @@
-/* Minimalist styles with calming colors and toggle animation */
 :root {
-    --primary-color: #34495e; /* Dark blue-gray */
-    --background-color: #f5f5f5; /* Light gray */
-    --text-color: #333333; /* Dark gray for text */
-    --accent-color: #3498db; /* Soft blue for accents */
-    --secondary-background: #ffffff; /* White for cards */
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    --primary-color: #E63946;
+    --background-color: #F8F5F0;
+    --text-color: #1D3557;
+    --accent-color: #457B9D;
+    --secondary-background: #FFFFFF;
+    --case-study-color: #e97451;
+    --view-gallery-color: #8a2be2;
+    --website-live-color: #000000;
 }
 
 body {
-    font-family: 'Inter', Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
 }
 
 .container {
-    width: 90%;
-    max-width: 1000px;
+    width: 100%;
+    max-width: 1140px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-/* Typography */
+header {
+    background-color: var(--secondary-background);
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin-left: 2rem;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+nav ul li a:hover {
+    color: var(--primary-color);
+}
+
+main {
+    padding: 2rem 0;
+}
+
 h1, h2, h3 {
-    font-weight: 300;
+    font-weight: 600;
     line-height: 1.2;
     margin-bottom: 1rem;
-    color: var(--primary-color);
 }
 
 h1 {
@@ -47,140 +88,98 @@ h3 {
     font-size: 1.5rem;
 }
 
-p {
-    margin-bottom: 1.5rem;
-}
-
-/* Header styles */
-header {
-    background-color: var(--secondary-background);
-    padding: 1rem 0;
-    box-shadow: 0 2px 4px rgba(202, 66, 66, 0.1);
-}
-
-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo {
-    font-size: 1.5rem;
-    font-weight: 300;
-    color: var(--primary-color);
-}
-
-nav ul {
-    display: flex;
-    list-style: none;
-}
-
-nav ul li {
-    margin-left: 2rem;
-}
-
-nav ul li a {
-    text-decoration: none;
-    color: var(--text-color);
-    transition: color 0.3s ease;
-}
-
-nav ul li a:hover {
-    color: var(--accent-color);
-}
-
-/* Main content styles */
-main {
-    padding: 4rem 0;
-}
-
 .subtitle {
-    font-size: 1.2rem;
-    color: var(--text-color);
-    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    color: var(--accent-color);
+    margin-bottom: 1.5rem;
+    font-weight: 400;
 }
 
-.cta {
-    display: inline-block;
-    background-color: var(--accent-color);
-    color: var(--secondary-background);
-    padding: 0.5rem 1rem;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+/* Tools Page Styles */
+.tools-page {
+    background-color: var(--background-color);
 }
 
-.cta:hover {
-    background-color: var(--primary-color);
-}
-
-/* Grid layouts */
-.tool-grid,
-.resource-grid {
+.tools-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: 1fr 2fr 1fr;
     gap: 2rem;
+    align-items: start;
 }
 
-/* Card styles */
-.tool-card,
-.resource-card,
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
+.column h2 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.column p {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0 0 1rem 0;
+    color: var(--text-color);
+    font-weight: 400;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 200px;
+    transition: opacity 0.3s ease;
+}
+
+.button:hover {
+    opacity: 0.8;
+}
+
+.case-study {
+    background-color: var(--case-study-color);
+    color: white;
+}
+
+.view-gallery {
+    background-color: var(--view-gallery-color);
+    color: white;
+}
+
+.website-live {
+    background-color: var(--website-live-color);
+    color: white;
+}
+
+/* Curriculum Module Styles */
 .curriculum-module {
     background-color: var(--secondary-background);
-    padding: 1.5rem;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: box-shadow 0.3s ease;
-}
-
-.tool-card:hover,
-.resource-card:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-/* Search container */
-.search-container {
-    margin-bottom: 2rem;
-    display: flex;
-}
-
-.search-container input {
-    flex-grow: 1;
-    padding: 0.5rem;
-    font-size: 1rem;
-    border: 1px solid var(--primary-color);
-    border-right: none;
-    border-radius: 4px 0 0 4px;
-}
-
-.search-container button {
-    padding: 0.5rem 1rem;
-    background-color: var(--primary-color);
-    color: var(--secondary-background);
-    border: none;
-    border-radius: 0 4px 4px 0;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.search-container button:hover {
-    background-color: var(--accent-color);
-}
-
-/* Curriculum styles with toggle animation */
-.curriculum-module {
     margin-bottom: 1rem;
-    overflow: hidden;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .module-header {
     background-color: var(--secondary-background);
-    color: var(--primary-color);
+    color: var(--text-color);
     padding: 1rem;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-weight: 500;
 }
 
 .module-header::after {
@@ -196,35 +195,134 @@ main {
 .module-content {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.5s ease;
+    transition: max-height 0.5s ease, padding 0.5s ease;
+    padding: 0 1rem;
 }
 
 .module-content.active {
-    max-height: 500px; /* Adjust this value based on your content */
+    max-height: 1000px;
+    padding: 1rem;
 }
 
-/* Footer styles */
+/* Footer Styles */
 footer {
     background-color: var(--secondary-background);
     color: var(--text-color);
-    padding: 2rem 0;
+    padding: 1rem 0;
     text-align: center;
-    box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Responsive adjustments */
+/* Responsive Styles */
 @media (max-width: 768px) {
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .column {
+        margin-bottom: 2rem;
+    }
+
     nav {
         flex-direction: column;
         align-items: flex-start;
     }
-    
+
     nav ul {
         margin-top: 1rem;
     }
-    
+
     nav ul li {
         margin-left: 0;
         margin-right: 1rem;
+    }
+}
+
+/* Tools Page Specific Styles */
+.tools-page {
+    background-color: #f8f5f0;
+    padding: 40px 0;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
+.column h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 20px;
+    font-weight: 500;
+    height: 20px;
+    line-height: 20px;
+}
+
+.column > * {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.date-column p,
+.projects-column p {
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+    line-height: 40px;
+}
+
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    width: 100%;
+    max-width: 200px;
+    height: 40px;
+    transition: opacity 0.3s ease;
+}
+
+.button:hover {
+    opacity: 0.8;
+}
+
+.case-study {
+    background-color: #e97451;
+    color: white;
+}
+
+.view-gallery {
+    background-color: #8a2be2;
+    color: white;
+}
+
+.website-live {
+    background-color: #000;
+    color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .column {
+        margin-bottom: 40px;
     }
 }
