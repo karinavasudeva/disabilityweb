@@ -115,18 +115,4 @@ Sincerely,
   `.trim();
 }
 
-function startServer(port) {
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  }).on('error', (e) => {
-    if (e.code === 'EADDRINUSE') {
-      console.log(`Port ${port} is already in use. Trying the next port...`);
-      startServer(port + 1);
-    } else {
-      console.error('An error occurred:', e);
-    }
-  });
-}
-
-// Start the server on port 3000, or the next available port
-startServer(3001);
+module.exports = app;
