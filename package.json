@@ -1,0 +1,25 @@
+{
+  "name": "gremlin-tools",
+  "version": "1.0.0",
+  "description": "An homage to goblin tools",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HackaCat/gremlin-tools.git"
+  },
+  "author": "HackCat Labs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HackaCat/gremlin-tools/issues"
+  },
+  "homepage": "https://github.com/HackaCat/gremlin-tools#readme",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0"
+  }
+}
