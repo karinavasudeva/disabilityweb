@@ -1,5 +1,5 @@
 {
-  "name": "accommodation-letter-generator",
+  "name": "accomodation-generator",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
