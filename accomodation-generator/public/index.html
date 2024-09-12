@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accommodation Letter Generator</title>
+    <style>
+        :root {
+            --primary-color: #D13525;
+            --secondary-color: #0F7173;
+            --background-color: #F2F2F2;
+            --text-color: #212121;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.5em;
+            color: var(--secondary-color);
+            margin-top: 30px;
+        }
+        form {
+            display: grid;
+            gap: 20px;
+        }
+        label {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-bottom: 2px solid var(--secondary-color);
+            background-color: transparent;
+            font-size: 1em;
+        }
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #A82A1E;
+        }
+        #letterOutput, #accommodationsList {
+            background-color: white;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid var(--secondary-color);
+        }
+        #accommodationsList ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        #accommodationsList li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        #accommodationsList li::before {
+            content: '•';
+            color: var(--primary-color);
+            font-size: 1.5em;
+            position: absolute;
+            left: 0;
+            top: -5px;
+        }
+
+         #letterOutput {
+            background-color: white;
+            padding: 30px;
+            margin-top: 20px;
+            border-left: 4px solid var(--secondary-color);
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+          #letterOutput::first-line {
+            font-weight: bold;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #letterOutput, #letterOutput * {
+                visibility: visible;
+            }
+            #letterOutput {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
+         
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Accommodation Letter Generator</h1>
+        
+        <form id="letterForm">
+            <div>
+                <label for="name">Name:</label>
+                <input type="text" id="name" required>
+            </div>
+            
+            <div>
+                <label for="disability">Disability:</label>
+                <input type="text" id="disability" required>
+            </div>
+            
+            <div>
+                <label for="context">Context (e.g., student, employee):</label>
+                <input type="text" id="context" required>
+            </div>
+            
+            <button type="submit">Generate Letter</button>
+        </form>
+
+        <h2>Suggested Accommodations</h2>
+        <div id="accommodationsList"></div>
+
+        <h2>Generated Letter</h2>
+        <div id="letterOutput"></div>
+    </div>
+
+    <script>
+        const letterForm = document.getElementById('letterForm');
+        const letterOutput = document.getElementById('letterOutput');
+        const accommodationsList = document.getElementById('accommodationsList');
+
+        letterForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const disability = document.getElementById('disability').value;
+            const context = document.getElementById('context').value;
+
+            const response = await fetch('/generate-letter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, disability, context })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                letterOutput.textContent = result.letter;
+                accommodationsList.innerHTML = '<ul>' + 
+                    result.accommodations.map(acc => `<li>${acc}</li>`).join('') + 
+                    '</ul>';
+            } else {
+                alert(`Error: ${result.error}`);
+            }
+        });
+    </script>
+</div>
+</body>
+</html>
