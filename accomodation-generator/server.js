@@ -8,6 +8,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
+// Add this new route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.post('/generate-letter', async (req, res) => {
   try {
     const { name, disability, context } = req.body;
