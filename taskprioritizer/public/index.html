@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spoon-based Task Prioritizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4 inline-block">Spoon-based Task Prioritizer</h1>
+        <div class="tooltip inline-block ml-2">
+            <span class="tooltiptext">
+                <h3 class="font-bold mb-2">Spoon Theory</h3>
+                <p>Spoon Theory is a metaphor used to explain the limited energy available to those with chronic illnesses or disabilities. Key points:</p>
+                <ul class="list-disc pl-5">
+                    <li>Spoons represent units of energy</li>
+                    <li>Each task costs a certain number of spoons</li>
+                    <li>People have a limited number of spoons per day</li>
+                    <li>Managing spoons helps prioritize tasks and conserve energy</li>
+                    <li>Spoon count can vary day-to-day based on health</li>
+                </ul>
+                <p>This tool helps you manage your daily "spoons" and prioritize tasks accordingly.</p>
+            </span>
+        </div>
+
+        <div class="mb-4">
+            <label for="spoonCount" class="block text-sm font-medium text-gray-700">Available Spoons:</label>
+            <div class="flex items-center">
+                <input type="number" id="spoonCount" name="spoonCount" min="0" max="50" value="12" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <input type="range" id="spoonSlider" min="0" max="50" value="12" class="ml-4">
+            </div>
+            <p class="text-sm text-gray-500 mt-1">Typical range: 0-50 spoons. Adjust as needed for your personal scale.</p>
+        </div>
+
+        <div class="mb-4 p-4 bg-blue-100 rounded flex items-center">
+            <div id="spoonUsage" class="flex-1">
+                <h2 class="text-xl font-semibold mb-2">Spoon Usage</h2>
+                <p>Available Spoons: <span id="availableSpoons">12</span></p>
+                <p>Used Spoons: <span id="usedSpoons">0</span></p>
+                <p>Remaining Spoons: <span id="remainingSpoons">12</span></p>
+            </div>
+            <div id="spoonPieChart" class="flex-1 flex justify-center"></div>
+        </div>
+
+        <div id="recommendedTasks" class="mb-4 p-4 bg-green-100 rounded"></div>
+
+        <div class="mb-4">
+            <h2 class="text-xl font-semibold mb-2">Add New Task</h2>
+            <input type="text" id="taskInput" placeholder="Enter task" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <input type="date" id="dueDate" class="mt-2 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <select id="recurrence" class="mt-2 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <option value="">No recurrence</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+            </select>
+            <button id="addTaskBtn" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add Task</button>
+        </div>
+
+        <div class="mb-4">
+            <h2 class="text-xl font-semibold mb-2">Upload Agenda Image</h2>
+            <input type="file" id="imageUpload" accept="image/*" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <button id="processImageBtn" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Process Image</button>
+        </div>
+
+        <div id="taskList" class="mt-4"></div>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
