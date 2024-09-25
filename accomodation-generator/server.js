@@ -1,117 +1,87 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const axios = require('axios');
-const path = require('path');  // Add this line
+const fs = require('fs');
+const csv = require('csv-parser'); 
+const path = require('path');
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+let accommodationsData = {};
+let diseases = new Set();
 
-app.post('/generate-letter', async (req, res) => {
-  try {
-    const { name, disability, context } = req.body;
-    if (!name || !disability || !context) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-    
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({ error: 'OpenAI API key is not set' });
-    }
-    
-    const accommodations = await generateAccommodations(disability, context);
-    const letter = generateAccommodationLetter(name, disability, accommodations, context);
-    res.json({ letter, accommodations });
-  } catch (error) {
-    console.error('An error occurred:', error);
-    res.status(500).json({ 
-      error: 'An error occurred', 
-      details: error.message,
-      stack: process.env.NODE_ENV === 'production' ? '🥞' : error.stack
-    });
-  }
-});
+function loadAccommodationsFromCSV() {
+    fs.createReadStream('accommodations.csv')
+        .pipe(csv({ separator: '\t' })) 
+        .on('data', (row) => {
+            const disease = row['Disease'];
+            const limitation = row['Limitation'];
+            const accommodation = row['Accommodation'];
 
-async function generateAccommodations(disability, context) {
-  const openaiApiKey = process.env.OPENAI_API_KEY;
-  const url = 'https://api.openai.com/v1/chat/completions';
-  
-  const prompt = `Given a person with the following disability: "${disability}" in a ${context} context, suggest 5 appropriate accommodations. Provide your response as a JSON array of strings.`;
+            if (!accommodationsData[disease]) {
+                accommodationsData[disease] = {};
+            }
+            if (!accommodationsData[disease][limitation]) {
+                accommodationsData[disease][limitation] = [];
+            }
 
-  try {
-    const response = await axios.post(url, {
-      model: "gpt-3.5-turbo",
-      messages: [
-        {role: "system", content: "You are a helpful assistant that suggests accommodations for people with disabilities."},
-        {role: "user", content: prompt}
-      ],
-      temperature: 0.7,
-      max_tokens: 200
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${openaiApiKey}`
-      }
-    });
-
-    let content = response.data.choices[0].message.content;
-    console.log('Raw API response:', content);
-
-    content = content.replace(/```json\n?|\n?```/g, '').trim();
-
-    try {
-      const suggestedAccommodations = JSON.parse(content);
-      if (Array.isArray(suggestedAccommodations)) {
-        return suggestedAccommodations;
-      } else {
-        console.error('API response is not an array:', suggestedAccommodations);
-        return ['Error: Unexpected response format from API'];
-      }
-    } catch (parseError) {
-      console.error('Error parsing JSON:', parseError);
-      console.error('Processed content:', content);
-      
-      const suggestions = content.split('\n').filter(line => line.trim().startsWith('-') || line.trim().startsWith('*') || line.trim().startsWith('"'));
-      if (suggestions.length > 0) {
-        return suggestions.map(suggestion => suggestion.replace(/^[-*"]\s*/, '').replace(/[",]$/g, '').trim());
-      } else {
-        return ['Error: Unable to parse API response'];
-      }
-    }
-  } catch (error) {
-    console.error('Error calling OpenAI API:', error.response ? error.response.data : error.message);
-    throw new Error('Error generating accommodations: ' + (error.response ? JSON.stringify(error.response.data) : error.message));
-  }
+            accommodationsData[disease][limitation].push(accommodation);
+            diseases.add(disease);
+        })
+        .on('end', () => {
+            console.log('Accommodations data loaded from CSV');
+        });
 }
 
+loadAccommodationsFromCSV();
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/diseases', (req, res) => {
+    res.json(Array.from(diseases));
+});
+
+app.get('/accommodations', (req, res) => {
+    const disease = req.query.disease;
+    if (accommodationsData[disease]) {
+        res.json({ accommodations: accommodationsData[disease] });
+    } else {
+        res.status(404).json({ error: 'No accommodations found for this disease' });
+    }
+});
+
+app.post('/generate-letter', (req, res) => {
+    const { name, disability, context, accommodations } = req.body;
+
+    const letter = generateAccommodationLetter(name, disability, accommodations, context);
+    res.json({ letter });
+});
+
 function generateAccommodationLetter(name, disability, accommodations, context) {
-  const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  
-  return `
+    const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    const accommodationsList = accommodations.map((acc, index) => `${index + 1}. ${acc}`).join('\n');
+
+    return `
 ${date}
 
-To Whom It May Concern:
+To Whom It May Concern,
 
 Re: Accommodation Request for ${name}
 
-I am writing this letter to formally request accommodations for ${name}, who has been diagnosed with ${disability}. ${name} is a valued ${context} who requires certain accommodations to ensure equal access and opportunity in their ${context} environment.
+I am writing to formally request accommodations for ${name}, who has been diagnosed with ${disability}. ${name} is a valued ${context} who requires certain accommodations to ensure equal access and opportunity in their ${context} environment.
 
-Based on ${name}'s condition and needs, the following accommodations are recommended:
+Based on ${name}'s condition, the following accommodations are recommended:
 
-${accommodations.map((acc, index) => `${index + 1}. ${acc}`).join('\n')}
+${accommodationsList}
 
-These accommodations are essential to help ${name} fully participate and succeed in their ${context} responsibilities. We kindly request your understanding and cooperation in implementing these accommodations as appropriate.
+These accommodations are essential to help ${name} fully participate in their responsibilities. We kindly request your cooperation in implementing these accommodations.
 
-It's important to note that this list is not exhaustive, and the specific accommodations should be discussed and tailored to ${name}'s individual needs and circumstances. We encourage open communication to ensure that ${name}'s needs are met effectively.
-
-If you require any additional information or have any questions regarding these accommodations, please don't hesitate to contact us. We are happy to provide further clarification or documentation as needed.
-
-Thank you for your attention to this matter and your commitment to providing an inclusive environment for all.
+Thank you for your attention.
 
 Sincerely,
 
@@ -119,7 +89,10 @@ Sincerely,
 [Your Title/Position]
 [Your Institution/Organization]
 [Contact Information]
-`.trim();
+    `.trim();
 }
 
-module.exports = app;
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});

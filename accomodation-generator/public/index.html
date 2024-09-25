@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -141,7 +142,8 @@
             
             <div>
                 <label for="disability">Disability:</label>
-                <input type="text" id="disability" required>
+                <select id="disability" required>
+                </select>
             </div>
             
             <div>
@@ -149,44 +151,18 @@
                 <input type="text" id="context" required>
             </div>
             
+            <button type="button" id="generateAccommodations">Generate Accommodations</button>
+
+            <h2>Suggested Accommodations</h2>
+            <div id="accommodationsList"></div>
+
             <button type="submit">Generate Letter</button>
         </form>
-
-        <h2>Suggested Accommodations</h2>
-        <div id="accommodationsList"></div>
 
         <h2>Generated Letter</h2>
         <div id="letterOutput"></div>
     </div>
 
-    <script>
-        const letterForm = document.getElementById('letterForm');
-        const letterOutput = document.getElementById('letterOutput');
-        const accommodationsList = document.getElementById('accommodationsList');
-
-        letterForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('name').value;
-            const disability = document.getElementById('disability').value;
-            const context = document.getElementById('context').value;
-
-            const response = await fetch('/generate-letter', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, disability, context })
-            });
-
-            const result = await response.json();
-            if (response.ok) {
-                letterOutput.textContent = result.letter;
-                accommodationsList.innerHTML = '<ul>' + 
-                    result.accommodations.map(acc => `<li>${acc}</li>`).join('') + 
-                    '</ul>';
-            } else {
-                alert(`Error: ${result.error}`);
-            }
-        });
-    </script>
-</div>
+    <script src="index.js"></script>
 </body>
 </html>
