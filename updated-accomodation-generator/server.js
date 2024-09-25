@@ -12,7 +12,7 @@ let accommodationsData = {};
 let diseases = new Set();
 
 async function loadAccommodationsFromCSV() {
-    const csvPath = path.join(process.cwd(), 'accomodations.csv');
+    const csvPath = path.join(process.cwd(), 'public', 'accomodations.csv');
     console.log('Attempting to read CSV from:', csvPath);
 
     try {
@@ -46,6 +46,7 @@ async function loadAccommodationsFromCSV() {
     } catch (error) {
         console.error('Error reading CSV file:', error);
         console.log('Current directory contents:', await fs.readdir(process.cwd()));
+        console.log('Public directory contents:', await fs.readdir(path.join(process.cwd(), 'public')));
     }
 }
 
@@ -115,7 +116,7 @@ Sincerely,
 }
 
 app.get('/api/check-csv', async (req, res) => {
-    const csvPath = path.join(process.cwd(), 'accomodations.csv');
+    const csvPath = path.join(process.cwd(), 'public', 'accomodations.csv');
     try {
         await fs.access(csvPath);
         const stats = await fs.stat(csvPath);
