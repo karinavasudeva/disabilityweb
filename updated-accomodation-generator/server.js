@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs');
-const csv = require('csv-parser');
+const fs = require('fs').promises;
 const path = require('path');
 
 const app = express();
@@ -12,51 +11,49 @@ app.use(express.static('public'));
 let accommodationsData = {};
 let diseases = new Set();
 
-function loadAccommodationsFromCSV() {
-    const csvPath = path.join(__dirname, 'public', 'accomodations.csv');
+async function loadAccommodationsFromCSV() {
+    const csvPath = path.join(process.cwd(), 'accomodations.csv');
     console.log('Attempting to read CSV from:', csvPath);
-    fs.createReadStream(csvPath)
-        .pipe(csv())  // Remove the separator option as it's comma-separated
-        .on('data', (row) => {
-            console.log('Raw CSV row:', row);  // Log each row
-            const disease = row['disability'];  // Changed from 'Disease' to 'disability'
-            const limitation = row['limitation'];  // Changed from 'Limitation' to 'limitation'
-            const accommodation = row['accommodation'];  // Changed from 'Accommodation' to 'accommodation'
 
-            console.log('Parsed row:', { disease, limitation, accommodation });  // Log parsed data
-
-            if (!accommodationsData[disease]) {
-                accommodationsData[disease] = {};
+    try {
+        const fileContent = await fs.readFile(csvPath, 'utf8');
+        const rows = fileContent.split('\n');
+        
+        rows.forEach((row, index) => {
+            if (index === 0) return; // Skip header row
+            const [disability, limitation, accommodation] = row.split(',');
+            
+            if (disability && limitation && accommodation) {
+                if (!accommodationsData[disability]) {
+                    accommodationsData[disability] = {};
+                }
+                if (!accommodationsData[disability][limitation]) {
+                    accommodationsData[disability][limitation] = [];
+                }
+                accommodationsData[disability][limitation].push(accommodation);
+                diseases.add(disability);
             }
-            if (!accommodationsData[disease][limitation]) {
-                accommodationsData[disease][limitation] = [];
-            }
-
-            accommodationsData[disease][limitation].push(accommodation);
-            diseases.add(disease);
-        })
-        .on('end', () => {
-            console.log('Accommodations data loaded from CSV');
-            console.log('Diseases loaded:', Array.from(diseases));
-            console.log('Full accommodations data:', JSON.stringify(accommodationsData, null, 2));
-        })
-        .on('error', (error) => {
-            console.error('Error reading CSV file:', error);
         });
+
+        console.log('Accommodations data loaded from CSV');
+        console.log('Diseases loaded:', Array.from(diseases));
+    } catch (error) {
+        console.error('Error reading CSV file:', error);
+    }
 }
 
-loadAccommodationsFromCSV();
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-app.get('/diseases', (req, res) => {
+app.get('/api/diseases', async (req, res) => {
+    if (diseases.size === 0) {
+        await loadAccommodationsFromCSV();
+    }
     console.log('Diseases requested. Sending:', Array.from(diseases));
     res.json(Array.from(diseases));
 });
 
-app.get('/accommodations', (req, res) => {
+app.get('/api/accommodations', async (req, res) => {
+    if (diseases.size === 0) {
+        await loadAccommodationsFromCSV();
+    }
     const disease = req.query.disease;
     console.log('Accommodations requested for disease:', disease);
     if (accommodationsData[disease]) {
@@ -68,7 +65,7 @@ app.get('/accommodations', (req, res) => {
     }
 });
 
-app.post('/generate-letter', (req, res) => {
+app.post('/api/generate-letter', (req, res) => {
     const { name, disability, context, accommodations } = req.body;
     console.log('Generating letter for:', { name, disability, context, accommodations });
 
@@ -107,7 +104,4 @@ Sincerely,
     `.trim();
 }
 
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+module.exports = app;
