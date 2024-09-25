@@ -1,40 +1,11 @@
-document.getElementById('letterForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const name = document.getElementById('name').value;
-    const disability = document.getElementById('disability').value;
-    const context = document.getElementById('context').value;
-
-    const selectedAccommodations = Array.from(document.querySelectorAll('input[name="accommodations"]:checked')).map(input => input.value);
-
-    try {
-        const response = await fetch('/generate-letter', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name, disability, context, accommodations: selectedAccommodations })
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        document.getElementById('letterOutput').textContent = data.letter;
-    } catch (error) {
-        console.error('An error occurred:', error);
-        document.getElementById('letterOutput').textContent = 'An error occurred while generating the letter.';
-    }
-});
-
 window.onload = async () => {
     const disabilityDropdown = document.getElementById('disability');
     try {
-        const response = await fetch('/diseases');  // Keep this as '/diseases' to match your server route
+        const response = await fetch('/api/diseases');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const disabilities = await response.json();  // Changed variable name for clarity
+        const disabilities = await response.json();
         console.log('Disabilities received:', disabilities);
 
         if (disabilities.length > 0) {
@@ -53,7 +24,7 @@ document.getElementById('generateAccommodations').addEventListener('click', asyn
     const disability = document.getElementById('disability').value;
 
     try {
-        const response = await fetch(`/accommodations?disease=${encodeURIComponent(disability)}`);
+        const response = await fetch(`/api/accommodations?disease=${encodeURIComponent(disability)}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -77,5 +48,34 @@ document.getElementById('generateAccommodations').addEventListener('click', asyn
     } catch (error) {
         console.error('An error occurred while fetching accommodations:', error);
         document.getElementById('accommodationsList').innerHTML = '<p>An error occurred while fetching accommodations.</p>';
+    }
+});
+
+document.getElementById('letterForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const disability = document.getElementById('disability').value;
+    const context = document.getElementById('context').value;
+
+    const selectedAccommodations = Array.from(document.querySelectorAll('input[name="accommodations"]:checked')).map(input => input.value);
+
+    try {
+        const response = await fetch('/api/generate-letter', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, disability, context, accommodations: selectedAccommodations })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        document.getElementById('letterOutput').textContent = data.letter;
+    } catch (error) {
+        console.error('An error occurred:', error);
+        document.getElementById('letterOutput').textContent = 'An error occurred while generating the letter.';
     }
 });
