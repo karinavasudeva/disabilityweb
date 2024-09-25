@@ -17,7 +17,10 @@ async function loadAccommodationsFromCSV() {
 
     try {
         const fileContent = await fs.readFile(csvPath, 'utf8');
+        console.log('CSV file content (first 200 chars):', fileContent.substring(0, 200));
+
         const rows = fileContent.split('\n');
+        console.log('Number of rows:', rows.length);
         
         rows.forEach((row, index) => {
             if (index === 0) return; // Skip header row
@@ -32,22 +35,29 @@ async function loadAccommodationsFromCSV() {
                 }
                 accommodationsData[disability][limitation].push(accommodation);
                 diseases.add(disability);
+            } else {
+                console.log('Invalid row:', row);
             }
         });
 
         console.log('Accommodations data loaded from CSV');
         console.log('Diseases loaded:', Array.from(diseases));
+        console.log('Number of diseases:', diseases.size);
     } catch (error) {
         console.error('Error reading CSV file:', error);
+        console.log('Current directory contents:', await fs.readdir(process.cwd()));
     }
 }
 
 app.get('/api/diseases', async (req, res) => {
     if (diseases.size === 0) {
+        console.log('No diseases loaded, attempting to load from CSV');
         await loadAccommodationsFromCSV();
     }
-    console.log('Diseases requested. Sending:', Array.from(diseases));
-    res.json(Array.from(diseases));
+    const diseasesArray = Array.from(diseases);
+    console.log('Diseases requested. Sending:', diseasesArray);
+    console.log('Number of diseases:', diseasesArray.length);
+    res.json(diseasesArray);
 });
 
 app.get('/api/accommodations', async (req, res) => {
@@ -103,5 +113,21 @@ Sincerely,
 [Contact Information]
     `.trim();
 }
+
+app.get('/api/check-csv', async (req, res) => {
+    const csvPath = path.join(process.cwd(), 'accomodations.csv');
+    try {
+        await fs.access(csvPath);
+        const stats = await fs.stat(csvPath);
+        res.json({ exists: true, path: csvPath, size: stats.size });
+    } catch (error) {
+        res.json({ exists: false, error: error.message, path: csvPath });
+    }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
 module.exports = app;
