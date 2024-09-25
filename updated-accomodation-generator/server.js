@@ -12,7 +12,7 @@ let accommodationsData = {};
 let diseases = new Set();
 
 async function loadAccommodationsFromCSV() {
-    const csvPath = path.join(process.cwd(), 'public', 'accomodations.csv');
+    const csvPath = path.join(__dirname, 'public', 'accomodations.csv');
     console.log('Attempting to read CSV from:', csvPath);
 
     try {
@@ -45,8 +45,9 @@ async function loadAccommodationsFromCSV() {
         console.log('Number of diseases:', diseases.size);
     } catch (error) {
         console.error('Error reading CSV file:', error);
-        console.log('Current directory contents:', await fs.readdir(process.cwd()));
-        console.log('Public directory contents:', await fs.readdir(path.join(process.cwd(), 'public')));
+        console.log('Current directory:', __dirname);
+        console.log('Current directory contents:', await fs.readdir(__dirname));
+        console.log('Public directory contents:', await fs.readdir(path.join(__dirname, 'public')));
     }
 }
 
@@ -116,13 +117,20 @@ Sincerely,
 }
 
 app.get('/api/check-csv', async (req, res) => {
-    const csvPath = path.join(process.cwd(), 'public', 'accomodations.csv');
+    const csvPath = path.join(__dirname, 'public', 'accomodations.csv');
     try {
         await fs.access(csvPath);
         const stats = await fs.stat(csvPath);
         res.json({ exists: true, path: csvPath, size: stats.size });
     } catch (error) {
-        res.json({ exists: false, error: error.message, path: csvPath });
+        res.json({ 
+            exists: false, 
+            error: error.message, 
+            path: csvPath,
+            currentDir: __dirname,
+            dirContents: await fs.readdir(__dirname),
+            publicContents: await fs.readdir(path.join(__dirname, 'public'))
+        });
     }
 });
 
