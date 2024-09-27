@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ExternalLink, Search } from 'lucide-react'
-import Button from '@/components/ui/button'
-import Input from '@/components/ui/input'
+import Button from '@/components/ui/button.js'
+import Input from '@/components/ui/input.js'
 
 const tools = [
   { name: 'Screen Reader Plus', description: 'Enhanced screen reader with customizable voices and languages.', link: '#', category: 'Visual' },
