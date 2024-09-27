@@ -1,27 +1,30 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'default' | 'outline';
+  className?: string;
 }
 
-const Button: React.FC<ButtonProps> = ({ 
-  variant = 'default', 
-  children, 
-  className = '',
-  ...props 
-}) => {
-  const baseClasses = 'px-4 py-2 rounded transition-colors duration-300';
-  const variantClasses = variant === 'default' 
-    ? 'bg-blue-500 text-white hover:bg-blue-600' 
-    : 'border border-blue-500 text-blue-500 hover:bg-blue-50';
+const Button: React.FC<ButtonProps> = ({ children, variant = 'default', className = '', ...props }) => {
+  const baseStyles = 'px-6 py-3 rounded-full font-medium focus:outline-none transition-colors';
+  
+  const variantStyles = {
+    default: 'bg-primary text-white hover:bg-opacity-90',
+    outline: 'border-2 border-primary text-primary hover:bg-primary hover:text-white',
+  };
+
+  const buttonStyles = `${baseStyles} ${variantStyles[variant]} ${className}`;
 
   return (
-    <button 
-      className={`${baseClasses} ${variantClasses} ${className}`} 
+    <motion.button 
+      className={buttonStyles} 
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
       {...props}
     >
       {children}
-    </button>
+    </motion.button>
   );
 };
 
