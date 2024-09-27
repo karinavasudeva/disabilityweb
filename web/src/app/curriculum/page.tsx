@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search } from 'lucide-react'
-import Input from '@/components/ui/input'
+import Input from '@/components/ui/Input'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/Accordion';
 
 const modules = [
