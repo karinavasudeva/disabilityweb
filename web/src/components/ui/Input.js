@@ -1,9 +1,19 @@
 import React from 'react';
 
-const Input = ({ className = '', ...props }) => {
-  const inputStyles = `w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${className}`;
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+}
 
-  return <input className={inputStyles} {...props} />;
+const Input: React.FC<InputProps> = ({ label, className = '', ...props }) => {
+  return (
+    <div className="flex flex-col">
+      {label && <label className="mb-1 text-sm text-gray-600">{label}</label>}
+      <input 
+        className={`px-4 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        {...props} 
+      />
+    </div>
+  );
 };
 
 export default Input;
