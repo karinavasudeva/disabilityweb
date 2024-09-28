@@ -1,7 +1,9 @@
 window.onload = async () => {
     const disabilityDropdown = document.getElementById('disability');
     try {
+        console.log('Fetching diseases...');
         const response = await fetch('/diseases');
+        console.log('Response status:', response.status);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -24,11 +26,14 @@ document.getElementById('generateAccommodations').addEventListener('click', asyn
     const disability = document.getElementById('disability').value;
 
     try {
+        console.log('Fetching accommodations for:', disability);
         const response = await fetch(`/accommodations?disease=${encodeURIComponent(disability)}`);
+        console.log('Response status:', response.status);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        console.log('Accommodations received:', data);
 
         const accommodationsList = document.getElementById('accommodationsList');
         accommodationsList.innerHTML = '';
@@ -60,6 +65,8 @@ document.getElementById('letterForm').addEventListener('submit', async (e) => {
     const selectedAccommodations = Array.from(document.querySelectorAll('input[name="accommodations"]:checked')).map(input => input.value);
 
     try {
+        console.log('Generating letter for:', name, disability, context);
+        console.log('Selected accommodations:', selectedAccommodations);
         const response = await fetch('/generate-letter', {
             method: 'POST',
             headers: {
@@ -67,6 +74,7 @@ document.getElementById('letterForm').addEventListener('submit', async (e) => {
             },
             body: JSON.stringify({ name, disability, context, accommodations: selectedAccommodations })
         });
+        console.log('Response status:', response.status);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
