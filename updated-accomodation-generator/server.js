@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
-const csv = require('csv-parser');
 const path = require('path');
 
 const app = express();
@@ -12,7 +11,6 @@ app.use(express.static('public'));
 let accommodationsData = {};
 let diseases = new Set();
 
-// Load CSV data synchronously at startup
 function loadAccommodationsFromCSV() {
     const filePath = path.join(__dirname, 'public', 'accommodations.csv');
     console.log('Attempting to read CSV file from:', filePath);
@@ -42,14 +40,13 @@ function loadAccommodationsFromCSV() {
     console.log('Diseases loaded:', Array.from(diseases));
 }
 
-// Load data immediately
 loadAccommodationsFromCSV();
 
-app.get('/api/diseases', (req, res) => {
+app.get('/diseases', (req, res) => {
     res.json(Array.from(diseases));
 });
 
-app.get('/api/accommodations', (req, res) => {
+app.get('/accommodations', (req, res) => {
     const disease = req.query.disease;
     if (accommodationsData[disease]) {
         res.json({ accommodations: accommodationsData[disease] });
@@ -58,7 +55,7 @@ app.get('/api/accommodations', (req, res) => {
     }
 });
 
-app.post('/api/generate-letter', (req, res) => {
+app.post('/generate-letter', (req, res) => {
     const { name, disability, context, accommodations } = req.body;
     const letter = generateAccommodationLetter(name, disability, accommodations, context);
     res.json({ letter });
@@ -96,7 +93,6 @@ Sincerely,
 
 module.exports = app;
 
-// Only start the server if this file is run directly
 if (require.main === module) {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
