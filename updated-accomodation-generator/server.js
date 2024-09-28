@@ -22,11 +22,17 @@ function loadAccommodationsFromCSV() {
 
     try {
         const fileContent = fs.readFileSync(filePath, 'utf8');
+        console.log('File content length:', fileContent.length);
         const rows = fileContent.split('\n');
+        console.log('Number of rows:', rows.length);
         
         rows.forEach((row, index) => {
-            if (index === 0) return; // Skip header row
+            if (index === 0) {
+                console.log('Header row:', row);
+                return; // Skip header row
+            }
             const [disability, limitation, accommodation] = row.split(',').map(item => item.trim());
+            console.log(`Row ${index}:`, { disability, limitation, accommodation });
             if (disability && limitation && accommodation) {
                 if (!accommodationsData[disability]) {
                     accommodationsData[disability] = {};
@@ -36,12 +42,15 @@ function loadAccommodationsFromCSV() {
                 }
                 accommodationsData[disability][limitation].push(accommodation);
                 diseases.add(disability);
+            } else {
+                console.log(`Skipping row ${index} due to missing data`);
             }
         });
 
         console.log('Accommodations data loaded successfully from CSV');
         console.log('Number of diseases loaded:', diseases.size);
         console.log('Diseases:', Array.from(diseases));
+        console.log('Accommodations data:', JSON.stringify(accommodationsData, null, 2));
     } catch (error) {
         console.error('Error reading or parsing CSV file:', error);
     }
