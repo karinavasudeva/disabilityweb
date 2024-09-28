@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs').promises;
+const fs = require('fs');
+const csv = require('csv-parser');
 const path = require('path');
 
 const app = express();
@@ -11,81 +12,58 @@ app.use(express.static('public'));
 let accommodationsData = {};
 let diseases = new Set();
 
-async function loadAccommodationsFromCSV() {
-    const csvPath = path.join(process.cwd(), 'accomodations.csv');
-    console.log('Attempting to read CSV from:', csvPath);
+function loadAccommodationsFromCSV() {
+    const filePath = path.join(__dirname, 'public', 'accommodations.csv');
+    
+    fs.createReadStream(filePath)
+        .pipe(csv({ separator: '\t' }))
+        .on('data', (row) => {
+            const disease = row['Disease'];
+            const limitation = row['Limitation'];
+            const accommodation = row['Accommodation'];
 
-    try {
-        const fileContent = await fs.readFile(csvPath, 'utf8');
-        console.log('CSV file content (first 200 chars):', fileContent.substring(0, 200));
-
-        const rows = fileContent.split('\n');
-        console.log('Number of rows:', rows.length);
-        
-        rows.forEach((row, index) => {
-            if (index === 0) return; // Skip header row
-            const [disability, limitation, accommodation] = row.split(',');
-            
-            if (disability && limitation && accommodation) {
-                if (!accommodationsData[disability]) {
-                    accommodationsData[disability] = {};
-                }
-                if (!accommodationsData[disability][limitation]) {
-                    accommodationsData[disability][limitation] = [];
-                }
-                accommodationsData[disability][limitation].push(accommodation);
-                diseases.add(disability);
-            } else {
-                console.log('Invalid row:', row);
+            if (!accommodationsData[disease]) {
+                accommodationsData[disease] = {};
             }
-        });
+            if (!accommodationsData[disease][limitation]) {
+                accommodationsData[disease][limitation] = [];
+            }
 
-        console.log('Accommodations data loaded from CSV');
-        console.log('Diseases loaded:', Array.from(diseases));
-        console.log('Number of diseases:', diseases.size);
-    } catch (error) {
-        console.error('Error reading CSV file:', error);
-        console.log('Current directory contents:', await fs.readdir(process.cwd()));
-    }
+            accommodationsData[disease][limitation].push(accommodation);
+            diseases.add(disease);
+        })
+        .on('end', () => {
+            console.log('Accommodations data loaded from CSV');
+        });
 }
 
-app.get('/api/diseases', async (req, res) => {
-    if (diseases.size === 0) {
-        console.log('No diseases loaded, attempting to load from CSV');
-        await loadAccommodationsFromCSV();
-    }
-    const diseasesArray = Array.from(diseases);
-    console.log('Diseases requested. Sending:', diseasesArray);
-    console.log('Number of diseases:', diseasesArray.length);
-    res.json(diseasesArray);
+loadAccommodationsFromCSV();
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/api/accommodations', async (req, res) => {
-    if (diseases.size === 0) {
-        await loadAccommodationsFromCSV();
-    }
+app.get('/diseases', (req, res) => {
+    res.json(Array.from(diseases));
+});
+
+app.get('/accommodations', (req, res) => {
     const disease = req.query.disease;
-    console.log('Accommodations requested for disease:', disease);
     if (accommodationsData[disease]) {
-        console.log('Accommodations found:', accommodationsData[disease]);
         res.json({ accommodations: accommodationsData[disease] });
     } else {
-        console.log('No accommodations found for disease:', disease);
         res.status(404).json({ error: 'No accommodations found for this disease' });
     }
 });
 
-app.post('/api/generate-letter', (req, res) => {
+app.post('/generate-letter', (req, res) => {
     const { name, disability, context, accommodations } = req.body;
-    console.log('Generating letter for:', { name, disability, context, accommodations });
-
     const letter = generateAccommodationLetter(name, disability, accommodations, context);
     res.json({ letter });
 });
 
 function generateAccommodationLetter(name, disability, accommodations, context) {
     const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
     const accommodationsList = accommodations.map((acc, index) => `${index + 1}. ${acc}`).join('\n');
 
     return `
@@ -114,26 +92,7 @@ Sincerely,
     `.trim();
 }
 
-app.get('/api/check-csv', async (req, res) => {
-    const csvPath = path.join(process.cwd(), 'accomodations.csv');
-    try {
-        await fs.access(csvPath);
-        const stats = await fs.stat(csvPath);
-        res.json({ exists: true, path: csvPath, size: stats.size });
-    } catch (error) {
-        res.json({ 
-            exists: false, 
-            error: error.message, 
-            path: csvPath,
-            currentDir: process.cwd(),
-            dirContents: await fs.readdir(process.cwd())
-        });
-    }
-});
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
-
-module.exports = app;
