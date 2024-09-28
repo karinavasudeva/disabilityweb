@@ -23,6 +23,8 @@ function loadAccommodationsFromCSV() {
     try {
         const fileContent = fs.readFileSync(filePath, 'utf8');
         console.log('File content length:', fileContent.length);
+        console.log('First 200 characters of file:', fileContent.substring(0, 200));
+        
         const rows = fileContent.split('\n');
         console.log('Number of rows:', rows.length);
         
@@ -32,7 +34,7 @@ function loadAccommodationsFromCSV() {
                 return; // Skip header row
             }
             const [disability, limitation, accommodation] = row.split(',').map(item => item.trim());
-            console.log(`Row ${index}:`, { disability, limitation, accommodation });
+            
             if (disability && limitation && accommodation) {
                 if (!accommodationsData[disability]) {
                     accommodationsData[disability] = {};
@@ -43,16 +45,16 @@ function loadAccommodationsFromCSV() {
                 accommodationsData[disability][limitation].push(accommodation);
                 diseases.add(disability);
             } else {
-                console.log(`Skipping row ${index} due to missing data`);
+                console.log(`Skipping row ${index} due to missing data:`, row);
             }
         });
 
-        console.log('Accommodations data loaded successfully from CSV');
+        console.log('CSV processing complete');
         console.log('Number of diseases loaded:', diseases.size);
         console.log('Diseases:', Array.from(diseases));
-        console.log('Accommodations data:', JSON.stringify(accommodationsData, null, 2));
     } catch (error) {
         console.error('Error reading or parsing CSV file:', error);
+        console.error('Error stack:', error.stack);
     }
 }
 
@@ -67,15 +69,10 @@ app.get('/diseases', (req, res) => {
 
 app.get('/accommodations', (req, res) => {
     const disease = req.query.disease;
-    console.log('Received request for accommodations. Disease:', disease);
-    console.log('Available diseases:', Array.from(diseases));
-    console.log('Accommodations data:', JSON.stringify(accommodationsData, null, 2));
-    
+    console.log('Received request for accommodations for disease:', disease);
     if (accommodationsData[disease]) {
-        console.log('Accommodations found for disease:', disease);
         res.json({ accommodations: accommodationsData[disease] });
     } else {
-        console.log('No accommodations found for disease:', disease);
         res.status(404).json({ error: 'No accommodations found for this disease' });
     }
 });
