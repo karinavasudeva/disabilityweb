@@ -14,7 +14,7 @@ let diseases = new Set();
 
 function loadAccommodationsFromCSV() {
     const filePath = path.join(__dirname, 'public', 'accommodations.csv');
-    
+
     fs.createReadStream(filePath)
         .pipe(csv({ separator: '\t' }))
         .on('data', (row) => {
