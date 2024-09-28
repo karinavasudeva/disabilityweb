@@ -15,11 +15,15 @@ let diseases = new Set();
 function loadAccommodationsFromCSV() {
     const filePath = path.join(__dirname, 'public', 'accommodations.csv');
     
+    console.log('Attempting to read CSV file from:', filePath);
+
+    if (!fs.existsSync(filePath)) {
+        console.error(`Error: File does not exist at ${filePath}`);
+        return;
+    }
+
     fs.createReadStream(filePath)
-        .on('error', (err) => {
-            console.error(`Error reading CSV file: ${err.message}`);
-        })
-        .pipe(csv({ separator: ',' }))
+        .pipe(csv())
         .on('data', (row) => {
             const disability = row['disability'];
             const limitation = row['limitation']; 
@@ -35,7 +39,8 @@ function loadAccommodationsFromCSV() {
             diseases.add(disability);
         })
         .on('end', () => {
-            console.log('Accommodations data loaded from CSV');
+            console.log('Accommodations data loaded successfully from CSV');
+            console.log('Diseases loaded:', Array.from(diseases));
         })
         .on('error', (err) => {
             console.error(`Error processing CSV file: ${err.message}`);
@@ -48,11 +53,11 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/diseases', (req, res) => {
+app.get('/api/diseases', (req, res) => {
     res.json(Array.from(diseases));
 });
 
-app.get('/accommodations', (req, res) => {
+app.get('/api/accommodations', (req, res) => {
     const disease = req.query.disease;
     if (accommodationsData[disease]) {
         res.json({ accommodations: accommodationsData[disease] });
@@ -61,7 +66,7 @@ app.get('/accommodations', (req, res) => {
     }
 });
 
-app.post('/generate-letter', (req, res) => {
+app.post('/api/generate-letter', (req, res) => {
     const { name, disability, context, accommodations } = req.body;
     const letter = generateAccommodationLetter(name, disability, accommodations, context);
     res.json({ letter });
@@ -100,4 +105,5 @@ Sincerely,
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log('Current working directory:', process.cwd());
 });
