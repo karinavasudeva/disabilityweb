@@ -1,3 +1,4 @@
+console.log('Server starting - version 2');  // Add this line at the top
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
