@@ -20,34 +20,45 @@ function loadAccommodationsFromCSV() {
         return;
     }
 
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    const rows = fileContent.split('\n');
-    
-    rows.forEach((row, index) => {
-        if (index === 0) return; // Skip header row
-        const [disability, limitation, accommodation] = row.split(',');
-        if (!accommodationsData[disability]) {
-            accommodationsData[disability] = {};
-        }
-        if (!accommodationsData[disability][limitation]) {
-            accommodationsData[disability][limitation] = [];
-        }
-        accommodationsData[disability][limitation].push(accommodation);
-        diseases.add(disability);
-    });
+    try {
+        const fileContent = fs.readFileSync(filePath, 'utf8');
+        const rows = fileContent.split('\n');
+        
+        rows.forEach((row, index) => {
+            if (index === 0) return; // Skip header row
+            const [disability, limitation, accommodation] = row.split(',').map(item => item.trim());
+            if (disability && limitation && accommodation) {
+                if (!accommodationsData[disability]) {
+                    accommodationsData[disability] = {};
+                }
+                if (!accommodationsData[disability][limitation]) {
+                    accommodationsData[disability][limitation] = [];
+                }
+                accommodationsData[disability][limitation].push(accommodation);
+                diseases.add(disability);
+            }
+        });
 
-    console.log('Accommodations data loaded successfully from CSV');
-    console.log('Diseases loaded:', Array.from(diseases));
+        console.log('Accommodations data loaded successfully from CSV');
+        console.log('Number of diseases loaded:', diseases.size);
+        console.log('Diseases:', Array.from(diseases));
+    } catch (error) {
+        console.error('Error reading or parsing CSV file:', error);
+    }
 }
 
 loadAccommodationsFromCSV();
 
 app.get('/diseases', (req, res) => {
+    console.log('Received request for diseases');
+    console.log('Number of diseases:', diseases.size);
+    console.log('Diseases:', Array.from(diseases));
     res.json(Array.from(diseases));
 });
 
 app.get('/accommodations', (req, res) => {
     const disease = req.query.disease;
+    console.log('Received request for accommodations for disease:', disease);
     if (accommodationsData[disease]) {
         res.json({ accommodations: accommodationsData[disease] });
     } else {
