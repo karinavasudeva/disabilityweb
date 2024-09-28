@@ -13,6 +13,7 @@ let accommodationsData = {};
 let diseases = new Set();
 
 function loadAccommodationsFromCSV() {
+    console.log('Starting loadAccommodationsFromCSV function');
     const filePath = path.join(__dirname, 'public', 'accommodations.csv');
     console.log('Attempting to read CSV file from:', filePath);
 
@@ -22,26 +23,27 @@ function loadAccommodationsFromCSV() {
     }
 
     try {
+        console.log('File exists, attempting to read content');
         const fileContent = fs.readFileSync(filePath, 'utf8');
         console.log('File content length:', fileContent.length);
         console.log('First 200 characters of file:', fileContent.substring(0, 200));
         
         const rows = fileContent.split('\n').map(row => row.trim()).filter(row => row);
-        console.log('Number of rows:', rows.length);
+        console.log('Number of rows after splitting:', rows.length);
         
         rows.forEach((row, index) => {
+            console.log(`Processing row ${index}:`, row);
             if (index === 0) {
                 console.log('Header row:', row);
                 return; // Skip header row
             }
-            // Split by comma, but allow for quotes to enclose fields with commas
-            const parts = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-            if (!parts || parts.length < 3) {
+            const parts = row.split(',').map(part => part.trim());
+            if (parts.length < 3) {
                 console.log(`Skipping row ${index} due to incorrect format:`, row);
                 return;
             }
             
-            const [disability, limitation, accommodation] = parts.map(part => part.replace(/^"|"$/g, '').trim());
+            const [disability, limitation, accommodation] = parts;
             
             if (disability && limitation && accommodation) {
                 if (!accommodationsData[disability]) {
@@ -67,7 +69,8 @@ function loadAccommodationsFromCSV() {
     }
 }
 
-loadAccommodationsFromCSV();
+loadAccommodationsFromCSV():
+console.log('CSV loading complete');
 
 app.get('/diseases', (req, res) => {
     console.log('Received request for diseases');
@@ -90,6 +93,23 @@ app.post('/generate-letter', (req, res) => {
     const { name, disability, context, accommodations } = req.body;
     const letter = generateAccommodationLetter(name, disability, accommodations, context);
     res.json({ letter });
+});
+
+app.get('/check-csv', (req, res) => {
+    const filePath = path.join(__dirname, 'public', 'accommodations.csv');
+    if (fs.existsSync(filePath)) {
+        const stats = fs.statSync(filePath);
+        res.json({
+            exists: true,
+            size: stats.size,
+            path: filePath
+        });
+    } else {
+        res.json({
+            exists: false,
+            path: filePath
+        });
+    }
 });
 
 function generateAccommodationLetter(name, disability, accommodations, context) {
