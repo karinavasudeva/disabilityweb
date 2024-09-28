@@ -1,7 +1,7 @@
 window.onload = async () => {
     const disabilityDropdown = document.getElementById('disability');
     try {
-        const response = await fetch('/api/diseases');
+        const response = await fetch('/diseases');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -24,7 +24,7 @@ document.getElementById('generateAccommodations').addEventListener('click', asyn
     const disability = document.getElementById('disability').value;
 
     try {
-        const response = await fetch(`/api/accommodations?disease=${encodeURIComponent(disability)}`);
+        const response = await fetch(`/accommodations?disease=${encodeURIComponent(disability)}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -60,7 +60,7 @@ document.getElementById('letterForm').addEventListener('submit', async (e) => {
     const selectedAccommodations = Array.from(document.querySelectorAll('input[name="accommodations"]:checked')).map(input => input.value);
 
     try {
-        const response = await fetch('/api/generate-letter', {
+        const response = await fetch('/generate-letter', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
