@@ -67,10 +67,15 @@ app.get('/diseases', (req, res) => {
 
 app.get('/accommodations', (req, res) => {
     const disease = req.query.disease;
-    console.log('Received request for accommodations for disease:', disease);
+    console.log('Received request for accommodations. Disease:', disease);
+    console.log('Available diseases:', Array.from(diseases));
+    console.log('Accommodations data:', JSON.stringify(accommodationsData, null, 2));
+    
     if (accommodationsData[disease]) {
+        console.log('Accommodations found for disease:', disease);
         res.json({ accommodations: accommodationsData[disease] });
     } else {
+        console.log('No accommodations found for disease:', disease);
         res.status(404).json({ error: 'No accommodations found for this disease' });
     }
 });
