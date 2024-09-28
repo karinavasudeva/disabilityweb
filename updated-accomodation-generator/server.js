@@ -25,7 +25,7 @@ function loadAccommodationsFromCSV() {
         console.log('File content length:', fileContent.length);
         console.log('First 200 characters of file:', fileContent.substring(0, 200));
         
-        const rows = fileContent.split('\n');
+        const rows = fileContent.split('\n').map(row => row.trim()).filter(row => row);
         console.log('Number of rows:', rows.length);
         
         rows.forEach((row, index) => {
@@ -33,7 +33,14 @@ function loadAccommodationsFromCSV() {
                 console.log('Header row:', row);
                 return; // Skip header row
             }
-            const [disability, limitation, accommodation] = row.split(',').map(item => item.trim());
+            // Split by comma, but allow for quotes to enclose fields with commas
+            const parts = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+            if (!parts || parts.length < 3) {
+                console.log(`Skipping row ${index} due to incorrect format:`, row);
+                return;
+            }
+            
+            const [disability, limitation, accommodation] = parts.map(part => part.replace(/^"|"$/g, '').trim());
             
             if (disability && limitation && accommodation) {
                 if (!accommodationsData[disability]) {
@@ -44,6 +51,7 @@ function loadAccommodationsFromCSV() {
                 }
                 accommodationsData[disability][limitation].push(accommodation);
                 diseases.add(disability);
+                console.log(`Added: Disability: ${disability}, Limitation: ${limitation}, Accommodation: ${accommodation}`);
             } else {
                 console.log(`Skipping row ${index} due to missing data:`, row);
             }
