@@ -24,14 +24,23 @@ window.onload = async () => {
 
 document.getElementById('generateAccommodations').addEventListener('click', async () => {
     const disability = document.getElementById('disability').value;
+    console.log('Selected disability:', disability);
+
+    if (!disability) {
+        console.error('No disability selected');
+        document.getElementById('accommodationsList').innerHTML = '<p>Please select a disability.</p>';
+        return;
+    }
 
     try {
-        console.log('Fetching accommodations for:', disability);
+        console.log(`Fetching accommodations for: "${disability}"`);
         const response = await fetch(`/accommodations?disease=${encodeURIComponent(disability)}`);
         console.log('Response status:', response.status);
+        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
         const data = await response.json();
         console.log('Accommodations received:', data);
 
