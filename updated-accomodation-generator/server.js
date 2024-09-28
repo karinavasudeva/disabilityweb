@@ -14,26 +14,31 @@ let diseases = new Set();
 
 function loadAccommodationsFromCSV() {
     const filePath = path.join(__dirname, 'public', 'accommodations.csv');
-
+    
     fs.createReadStream(filePath)
-        .pipe(csv({ separator: '\t' }))
+        .on('error', (err) => {
+            console.error(`Error reading CSV file: ${err.message}`);
+        })
+        .pipe(csv({ separator: ',' }))
         .on('data', (row) => {
-            const disease = row['Disease'];
-            const limitation = row['Limitation'];
-            const accommodation = row['Accommodation'];
-
-            if (!accommodationsData[disease]) {
-                accommodationsData[disease] = {};
+            const disability = row['disability'];
+            const limitation = row['limitation']; 
+            const accommodation = row['accommodation'];
+            if (!accommodationsData[disability]) {
+                accommodationsData[disability] = {};
             }
-            if (!accommodationsData[disease][limitation]) {
-                accommodationsData[disease][limitation] = [];
+            if (!accommodationsData[disability][limitation]) {
+                accommodationsData[disability][limitation] = [];
             }
 
-            accommodationsData[disease][limitation].push(accommodation);
-            diseases.add(disease);
+            accommodationsData[disability][limitation].push(accommodation);
+            diseases.add(disability);
         })
         .on('end', () => {
             console.log('Accommodations data loaded from CSV');
+        })
+        .on('error', (err) => {
+            console.error(`Error processing CSV file: ${err.message}`);
         });
 }
 
