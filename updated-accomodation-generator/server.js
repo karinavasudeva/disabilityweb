@@ -1,3 +1,4 @@
+const axios = require('axios'); // Add this line
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
@@ -12,51 +13,71 @@ app.use(express.static('public'));
 let accommodationsData = {};
 let diseases = new Set();
 
-// Load CSV data synchronously at startup
 function loadAccommodationsFromCSV() {
     const filePath = path.join(__dirname, 'public', 'accommodations.csv');
-    console.log('Attempting to read CSV file from:', filePath);
-
-    if (!fs.existsSync(filePath)) {
-        console.error(`Error: File does not exist at ${filePath}`);
-        return;
-    }
+    if (!fs.existsSync(filePath)) return;
 
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const rows = fileContent.split('\n');
     
     rows.forEach((row, index) => {
-        if (index === 0) return; // Skip header row
+        if (index === 0) return;
         const [disability, limitation, accommodation] = row.split(',');
-        if (!accommodationsData[disability]) {
-            accommodationsData[disability] = {};
-        }
-        if (!accommodationsData[disability][limitation]) {
-            accommodationsData[disability][limitation] = [];
-        }
+        if (!accommodationsData[disability]) accommodationsData[disability] = {};
+        if (!accommodationsData[disability][limitation]) accommodationsData[disability][limitation] = [];
         accommodationsData[disability][limitation].push(accommodation);
         diseases.add(disability);
     });
-
-    console.log('Accommodations data loaded successfully from CSV');
-    console.log('Diseases loaded:', Array.from(diseases));
 }
 
-// Load data immediately
 loadAccommodationsFromCSV();
 
-app.get('/api/diseases', (req, res) => {
-    res.json(Array.from(diseases));
-});
+const LLAMA_API_KEY = process.env.LLAMA_API_KEY;
 
-app.get('/api/accommodations', (req, res) => {
+async function getAccommodationsFromLlama(disease) {
+    try {
+        const response = await axios.post('https://api.llamaapi.com/v1/generate', {
+            prompt: `Suggest reasonable accommodations for a person with ${disease}.`,
+            max_tokens: 150,
+            temperature: 0.7
+        }, {
+            headers: {
+                'Authorization': `Bearer ${LLAMA_API_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const suggestions = response.data.choices[0].text.trim().split('\n');
+        return suggestions;
+    } catch (error) {
+        console.error('Error calling Llama API:', error);
+        throw new Error('Failed to generate accommodations from Llama');
+    }
+}
+
+app.get('/api/accommodations', async (req, res) => {
     const disease = req.query.disease;
+
     if (accommodationsData[disease]) {
         res.json({ accommodations: accommodationsData[disease] });
     } else {
-        res.status(404).json({ error: 'No accommodations found for this disease' });
+        try {
+            const suggestions = await getAccommodationsFromLlama(disease);
+            res.json({ accommodations: { 'General Recommendations': suggestions } });
+        } catch (error) {
+            res.status(500).json({ error: 'Unable to generate accommodations for this disease' });
+        }
     }
 });
+
+module.exports = app;
+
+if (require.main === module) {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
 
 app.post('/api/generate-letter', (req, res) => {
     const { name, disability, context, accommodations } = req.body;
