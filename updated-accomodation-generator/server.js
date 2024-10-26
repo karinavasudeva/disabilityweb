@@ -14,7 +14,7 @@ let diseases = new Set();
 
 // Load CSV data synchronously at startup
 function loadAccommodationsFromCSV() {
-    const filePath = path.join(__dirname, 'public', 'accommodations.csv');
+    const filePath = path.join(__dirname, 'public', 'new_accommodations.csv');
     console.log('Attempting to read CSV file from:', filePath);
 
     if (!fs.existsSync(filePath)) {
